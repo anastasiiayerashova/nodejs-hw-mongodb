@@ -9,7 +9,7 @@ const getAllController = async (req, res) => {
             })
         }
 
-        res.json({
+        res.status(200).json({
             status: 200, message: 'Successfully found contacts', data: contacts
         })
 }
@@ -23,7 +23,7 @@ export const getByIdController = async (req, res) => {
             })
         }
 
-        res.json({ status: 200, message: `Successfully found contact with id ${contactId}`, data: contact
+        res.status(200).json({ status: 200, message: `Successfully found contact with id ${contactId}`, data: contact
         })
 }
 

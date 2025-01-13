@@ -1,13 +1,10 @@
 import express from 'express'
-import dotenv from 'dotenv'
 import pino from 'pino-http'
 import cors from 'cors'
 import { getEnvVar } from './utils/getEnvVar.js'
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { serverErrorMiddleware } from './middlewares/serverErrorMiddleware.js'
 import contactsRouter from './routers/contactsRouter.js'
-
-dotenv.config()
 
 const PORT = Number(getEnvVar('PORT', 3001))
 

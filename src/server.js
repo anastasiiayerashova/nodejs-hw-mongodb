@@ -5,11 +5,9 @@ import cors from 'cors'
 import { getEnvVar } from './utils/getEnvVar.js'
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { serverErrorMiddleware } from './middlewares/serverErrorMiddleware.js'
-import { getAllContactsController, getContactByIdController } from './controllers/contactsControllers.js'
 import contactsRouter from './routers/contactsRouter.js'
 
 dotenv.config()
-const logger = pino()
 
 const PORT = Number(getEnvVar('PORT', 3000))
 
@@ -25,10 +23,7 @@ export const startServer = () => {
     }))
 
     app.use('/contacts', contactsRouter)
-    // app.get('/contacts/:contactId', getContactByIdController)
     
-    
-
     app.use(notFoundMiddleware)
     app.use(serverErrorMiddleware)
 
@@ -36,6 +31,3 @@ export const startServer = () => {
         console.log(`Server is running on port ${PORT}`)
     })
 }
-
-
-

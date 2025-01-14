@@ -1,5 +1,6 @@
 import { controllerWrapper } from "../decorators/controllerWrapper.js"
 import { getAllContacts, getContactById } from "../services/contactsServices.js"
+import createHttpError from "http-errors"
 
 const getAllController = async (req, res) => {
         const contacts = await getAllContacts()
@@ -19,8 +20,7 @@ export const getByIdController = async (req, res, next) => {
         const contact = await getContactById(contactId)
 
         if (!contact) {
-            next(new Error(`Contact with id ${contactId} not found`))
-            return
+            throw createHttpError(404, `Contact with id ${contactId} not found` )
         }
 
         res.status(200).json({ status: 200, message: `Successfully found contact with id ${contactId}`, data: contact

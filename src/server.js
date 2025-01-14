@@ -3,7 +3,7 @@ import pino from 'pino-http'
 import cors from 'cors'
 import { getEnvVar } from './utils/getEnvVar.js'
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
-import { serverErrorMiddleware } from './middlewares/serverErrorMiddleware.js'
+import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js'
 import contactsRouter from './routers/contactsRouter.js'
 
 const PORT = Number(getEnvVar('PORT', 3001))
@@ -22,7 +22,7 @@ export const startServer = () => {
     app.use('/contacts', contactsRouter)
     
     app.use(notFoundMiddleware)
-    app.use(serverErrorMiddleware)
+    app.use(errorHandlerMiddleware)
 
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`)

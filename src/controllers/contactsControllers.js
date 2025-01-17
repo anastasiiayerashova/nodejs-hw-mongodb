@@ -23,7 +23,7 @@ const getByIdController = async (req, res, next) => {
         res.status(200).json({ status: 200, message: `Successfully found contact with id ${contactId}`, data: contact })
 }
 
-const createContactController = async (req, res) => {
+const createContactController = async (req, res, next) => {
         const contact = await createContact(req.body)
 
         res.status(201).json({ status: 201, message: 'Successfully created a contact', data: contact })

@@ -12,7 +12,11 @@ export const getContactById = async (contactId) => {
 
 export const createContact = async (payload) => await contactsCollection.create(payload)
 
-export const deleteContact = async (contactId) => await contactsCollection.findByIdAndDelete(contactId)
+export const deleteContact = async (contactId) => {
+    if (!mongoose.Types.ObjectId.isValid(contactId)) return null
+    
+    return await contactsCollection.findByIdAndDelete(contactId)
+}
 
 export const upsertContact = async (contactId, payload, options = {}) => {
     const result = await contactsCollection.findByIdAndUpdate(contactId, payload, {

@@ -16,10 +16,6 @@ const getByIdController = async (req, res, next) => {
         const {contactId} = req.params
         const contact = await getContactById(contactId)
 
-        if (!contact) {
-            return next(createHttpError(404, `Contact with id ${contactId} not found`))
-        }
-
         res.status(200).json({ status: 200, message: `Successfully found contact with id ${contactId}`, data: contact })
 }
 
@@ -29,9 +25,13 @@ const createContactController = async (req, res, next) => {
         res.status(201).json({ status: 201, message: 'Successfully created a contact', data: contact })
 }
 
-const deleteContactController = async (req, res) => {
+const deleteContactController = async (req, res, next) => {
         const {contactId} = req.params
-        await deleteContact(contactId)
+        const contact = await deleteContact(contactId)
+    
+        if (contact === null) {
+          return next(createHttpError(404, 'not found'))
+        }
 
         res.status(204).send()
 }

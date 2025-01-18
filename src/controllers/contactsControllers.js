@@ -29,9 +29,13 @@ const createContactController = async (req, res, next) => {
         res.status(201).json({ status: 201, message: 'Successfully created a contact', data: contact })
 }
 
-const deleteContactController = async (req, res) => {
+const deleteContactController = async (req, res, next) => {
         const {contactId} = req.params
-        await deleteContact(contactId)
+        const contact = await deleteContact(contactId)
+    
+        if (contact === null) {
+          return next(createHttpError(404, 'not found'))
+        }
 
         res.status(204).send()
 }

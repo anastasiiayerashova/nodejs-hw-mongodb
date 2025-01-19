@@ -1,9 +1,17 @@
 import { controllerWrapper } from "../decorators/controllerWrapper.js"
 import { createContact, deleteContact, getAllContacts, getContactById, upsertContact } from "../services/contactsServices.js"
 import createHttpError from "http-errors"
+import { parsePaginationParams } from "../utils/parsePaginationParams.js"
+import { parseFilterParams } from "../utils/parseFilterParams.js"
+import { parseSortParams } from "../utils/parseSortParams.js"
 
 const getAllController = async (req, res, next) => {
-        const contacts = await getAllContacts()
+        const { page, perPage } = parsePaginationParams(req.query)
+        const { sortBy, sortOrder } = parseSortParams(req.query)
+
+        const filter = parseFilterParams(req.query)
+    
+        const contacts = await getAllContacts({page, perPage, sortBy, sortOrder, filter})
 
         if (!contacts) {
             return next(createHttpError(404, 'No contacts found'))

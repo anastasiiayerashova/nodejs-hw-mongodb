@@ -13,7 +13,7 @@ export const createContactsSchema = Joi.object({
         'any.required': 'Name is required',
         ...nameMessages
     }),
-    phoneNumber: Joi.string().pattern(/^\+?\d{6,20}$/).min(6).max(20).required().messages({
+    phoneNumber: Joi.number().min(6).required().messages({
         'any.required': 'Phone number is required',
         ...phoneMessages
     }),

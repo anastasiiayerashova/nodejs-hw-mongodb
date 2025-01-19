@@ -10,9 +10,9 @@ export const nameMessages = {
 }
 
 export const phoneMessages = {
-        'string.pattern.base': 'Phone number must be a valid number with optional "+" and 6-20 digits',
-        'string.min': 'Phone number must have at least {#limit} digits',
-        'string.max': 'Phone number cannot exceed {#limit} digits',
+        'number.base': 'Phone number must be a number',
+        'number.min': 'Phone number must have at least {#limit} digits',
+        'number.max': 'Phone number cannot exceed {#limit} digits',
 }
 
 export const emailMessages = {

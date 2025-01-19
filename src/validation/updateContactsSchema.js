@@ -10,7 +10,7 @@ const validateName = (value, helpers) => {
 
 export const updateContactsSchema = Joi.object({
     name: Joi.string().min(3).max(20).custom(validateName).messages(nameMessages),
-    phoneNumber: Joi.string().pattern(/^\+?\d{6,20}$/).min(6).max(20).messages(phoneMessages),
+    phoneNumber: Joi.number().min(6).messages(phoneMessages),
     email: Joi.string().email({ tlds: { allow: false } }).min(3).max(20).messages(emailMessages),
     isFavourite: Joi.boolean().messages({
         'boolean.base': 'Is favourite should be a boolean',

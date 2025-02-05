@@ -4,7 +4,8 @@ import cors from 'cors'
 import { getEnvVar } from './utils/getEnvVar.js'
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js'
-import contactsRouter from './routers/contactsRouter.js'
+import router from './routers/index.js'
+import cookieParser from 'cookie-parser'
 
 const PORT = Number(getEnvVar('PORT', 3001))
 
@@ -18,8 +19,9 @@ export const startServer = () => {
             target: 'pino-pretty'
         }
     }))
+    app.use(cookieParser())
 
-    app.use('/contacts', contactsRouter)
+    app.use(router)
     
     app.use(notFoundMiddleware)
     app.use(errorHandlerMiddleware)

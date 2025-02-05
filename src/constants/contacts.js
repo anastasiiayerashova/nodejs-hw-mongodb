@@ -25,3 +25,6 @@ export const typeMessages = {
         'string.base': 'Contact type should be a string',
         'any.only': 'Contact type must be one of [work, home, personal], but received "{{#value}}"'
 }
+
+export const FIFTEEN_MINUTES = 15 * 60 * 1000
+export const ONE_DAY = 24 * 60 * 60 * 1000

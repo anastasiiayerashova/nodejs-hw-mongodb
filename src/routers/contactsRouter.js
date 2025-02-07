@@ -4,8 +4,11 @@ import { isValidId } from '../middlewares/isValidId.js'
 import { validateBody } from '../middlewares/validateBody.js'
 import { createContactsSchema } from '../validation/createContactsSchema.js'
 import { updateContactsSchema } from '../validation/updateContactsSchema.js'
+import { authenticate } from '../middlewares/authenticate.js'
 
 const contactsRouter = express.Router()
+
+contactsRouter.use('/', authenticate)
 
 contactsRouter.use('/:contactId', isValidId('contactId'))
 

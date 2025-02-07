@@ -7,7 +7,7 @@ import { sort_order } from "../constants/contacts.js"
 export const getAllContacts = async ({ page = 1, perPage = 10, sortBy = '_id', sortOrder = sort_order.asc, filter = {} }) => {
     const skip = perPage * (page - 1)
 
-    const contactsQuery = contactsCollection.find()
+    const contactsQuery = contactsCollection.find(filter)
 
     if (filter.type) {
         contactsQuery.where('contactType').equals(filter.type)
@@ -28,10 +28,8 @@ export const getAllContacts = async ({ page = 1, perPage = 10, sortBy = '_id', s
     }
 }
 
-export const getContactById = async (contactId) => {
-    if (!mongoose.Types.ObjectId.isValid(contactId)) return null
-    
-    return await contactsCollection.findById(contactId)
+export const getContactById = async (contactId, userId) => {
+    return await contactsCollection.findOne({_id: contactId, userId})
 }
 
 export const createContact = async (payload) => await contactsCollection.create(payload)

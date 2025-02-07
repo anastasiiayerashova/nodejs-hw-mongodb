@@ -1,23 +1,7 @@
 import { controllerWrapper } from "../decorators/controllerWrapper.js"
-import { loginUser, logoutUser, registerUser } from "../services/authServices.js"
+import { loginUser, logoutUser, refreshUser, registerUser } from "../services/authServices.js"
 
-const registerController = async (req, res) => {
-    const { body } = req
-    
-    const user = await registerUser(body)
-
-    res.status(200).json({
-        status: 200,
-        message: 'Successfully registered a user!',
-        data: user
-    })
-}
-
-const loginController = async (req, res) => {
-    const { body } = req
-    
-    const session = await loginUser(body)
-
+const setupCookies = (session, res) => {
     res.cookie('refreshToken', session.refreshToken, {
         httpOnly: true,
         expires: session.refreshTokenValidUntil
@@ -28,7 +12,28 @@ const loginController = async (req, res) => {
         expires: session.refreshTokenValidUntil
     })
 
-    res.json({
+}
+
+const registerController = async (req, res) => {
+    const { body } = req
+    
+    const user = await registerUser(body)
+
+    res.status(201).json({
+        status: 201,
+        message: 'Successfully registered a user',
+        data: user
+    })
+}
+
+const loginController = async (req, res) => {
+    const { body } = req
+    
+    const session = await loginUser(body)
+
+    setupCookies(session, res)
+
+    res.status(200).json({
         status: 200,
         message: 'Successfully logged in an user',
         data: {
@@ -48,8 +53,25 @@ const logoutController = async (req, res) => {
     res.status(204).send()
 }
 
+const refreshController = async (req, res) => {
+    const { sessionId, refreshToken } = req.cookies
+    
+    const session = await refreshUser(sessionId, refreshToken)
+
+    setupCookies(session, res)
+
+    res.status(200).json({
+        status: 200,
+        message: 'Successfully refreshed a session',
+        data: {
+           accessToken: session.accessToken,
+        }
+    })
+}
+
 export default {
     registerController: controllerWrapper(registerController),
     loginController: controllerWrapper(loginController),
-    logoutController: controllerWrapper(logoutController)
+    logoutController: controllerWrapper(logoutController),
+    refreshController: controllerWrapper(refreshController)
 }

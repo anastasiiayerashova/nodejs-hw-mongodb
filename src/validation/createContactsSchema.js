@@ -1,5 +1,6 @@
 import Joi from "joi"
 import { emailMessages, nameMessages, phoneMessages, typeMessages } from "../constants/contacts.js"
+import { isValidObjectId } from "mongoose"
 
 const validateName = (value, helpers) => {
     if (!/^[A-Za-z\s]+$/.test(value)) {
@@ -28,5 +29,12 @@ export const createContactsSchema = Joi.object({
     contactType: Joi.string().valid('work', 'home', 'personal').min(3).max(8).required().messages({
         'any.required': 'Contact type is required',
        ...typeMessages
-    })
+    }),
+    userId: Joi.string().custom((value, helper) => {
+		    if (value && !isValidObjectId(value)) {
+		      return helper.message('User id should be a valid mongo id')
+		    }
+		    return true
+		 }),
+
 })

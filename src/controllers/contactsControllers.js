@@ -11,6 +11,8 @@ const getAllController = async (req, res, next) => {
 
         const filter = parseFilterParams(req.query)
     
+        filter.userId = req.user._id
+    
         const contacts = await getAllContacts({page, perPage, sortBy, sortOrder, filter})
 
         if (!contacts) {
@@ -22,13 +24,13 @@ const getAllController = async (req, res, next) => {
 
 const getByIdController = async (req, res, next) => {
         const {contactId} = req.params
-        const contact = await getContactById(contactId)
+        const contact = await getContactById(contactId, req.user._id)
 
         res.status(200).json({ status: 200, message: `Successfully found contact with id ${contactId}`, data: contact })
 }
 
 const createContactController = async (req, res, next) => {
-        const contact = await createContact(req.body)
+        const contact = await createContact({...req.body, userId: req.body.userId ?? req.user._id})
 
         res.status(201).json({ status: 201, message: 'Successfully created a contact', data: contact })
 }
@@ -48,7 +50,7 @@ const upsertContactController = async (req, res) => {
         const { body } = req
         const { contactId } = req.params
     
-        const { contact, isNew } = await upsertContact(contactId, body, { upsert: true })
+        const { contact, isNew } = await upsertContact(contactId, body , { upsert: true })
         const status = isNew ? 201 : 200
     
         res.status(status).json({status, message: 'Successfully upserted contact', data: contact})
@@ -58,7 +60,7 @@ const patchContactController = async (req, res) => {
         const {body} = req
         const {contactId} = req.params
     
-        const {contact} = await upsertContact(contactId, body)
+        const {contact} = await upsertContact(contactId, body, req.user._id)
 
         res.status(200).json({ status: 200, message: 'Successfully patched a contact', data: contact})
 }

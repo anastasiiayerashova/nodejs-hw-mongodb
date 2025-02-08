@@ -11,9 +11,7 @@ const getAllController = async (req, res, next) => {
 
         const filter = parseFilterParams(req.query)
     
-        filter.userId = req.user._id
-    
-        const contacts = await getAllContacts({page, perPage, sortBy, sortOrder, filter})
+        const contacts = await getAllContacts({page, perPage, sortBy, sortOrder, filter, userId: req.user._id})
 
         if (!contacts) {
             return next(createHttpError(404, 'No contacts found'))
@@ -34,7 +32,7 @@ const getByIdController = async (req, res, next) => {
 }
 
 const createContactController = async (req, res, next) => {
-        const contact = await createContact({...req.body, userId: req.body.userId ?? req.user._id})
+        const contact = await createContact({...req.body, userId: req.user._id})
 
         res.status(201).json({ status: 201, message: 'Successfully created a contact', data: contact })
 }

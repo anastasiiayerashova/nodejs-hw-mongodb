@@ -50,7 +50,7 @@ const upsertContactController = async (req, res) => {
         const { body } = req
         const { contactId } = req.params
     
-        const { contact, isNew } = await upsertContact(contactId, body , { upsert: true })
+        const { contact, isNew } = await upsertContact(contactId, body, req.user._id, { upsert: true })
         const status = isNew ? 201 : 200
     
         res.status(status).json({status, message: 'Successfully upserted contact', data: contact})

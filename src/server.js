@@ -6,6 +6,7 @@ import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js'
 import router from './routers/index.js'
 import cookieParser from 'cookie-parser'
+import { MAIN_UPLOAD_DIR } from './constants/contacts.js'
 
 const PORT = Number(getEnvVar('PORT', 3001))
 
@@ -20,6 +21,8 @@ export const startServer = () => {
         }
     }))
     app.use(cookieParser())
+
+    app.use('/uploads', express.static(MAIN_UPLOAD_DIR))
 
     app.use(router)
     

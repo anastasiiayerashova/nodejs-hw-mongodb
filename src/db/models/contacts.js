@@ -27,6 +27,9 @@ const contactsSchema = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'users',
             required: true
+        },
+        avatarUrl: {
+            type: String
         }
     },
     {

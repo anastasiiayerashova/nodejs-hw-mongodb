@@ -115,13 +115,12 @@ export const sendResetPwd = async (email) => {
     })
     }
     catch (e) {
-        console.log(e)
-        throw createHttpError(500, 'Problem with sending email')
+        throw createHttpError(500, e.message)
     }
 }
 
 export const resetPwd = async ({ password, token }) => {
-    
+
     let tokenPayload
 
     try {

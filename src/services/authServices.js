@@ -3,7 +3,13 @@ import { usersCollection } from "../db/models/user.js"
 import bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 import { sessionsCollection } from "../db/models/session.js"
-import { FIFTEEN_MINUTES, THIRTY_DAYS } from "../constants/contacts.js"
+import jwt from 'jsonwebtoken'
+import { FIFTEEN_MINUTES, SMTP, THIRTY_DAYS } from "../constants/contacts.js"
+import { getEnvVar } from "../utils/getEnvVar.js"
+import { sendEmail } from "../utils/sendEmail.js"
+import Handlebars from "handlebars"
+import path from 'node:path'
+import fs from 'node:fs/promises'
 
 const createSession = () => {
     return {
@@ -74,5 +80,61 @@ export const refreshUser = async (sessionId, refreshToken) => {
         ...createSession(),
         userId: session.userId
     })
+}
 
+export const sendResetPwd = async (email) => {
+    const user = await usersCollection.findOne({ email })
+    
+    if (!user) throw createHttpError(404, `User with email ${email} not found`)
+    
+    const token = jwt.sign(
+    {
+        sub: user._id,
+        email
+    },
+    getEnvVar(SMTP.JWT_SECRET),
+    {
+        expiresIn: '15m'
+        })
+    
+    const templateSource = await fs.readFile(path.join('src', 'templates', 'reset-password-email.html'), 'utf-8')
+
+    const template = Handlebars.compile(templateSource.toString())
+
+    const html = template({
+        name: user.name,
+        link: `${getEnvVar(SMTP.FRONTEND_HOST)}/auth/send-reset-email?token=${token}`
+    })
+    
+    try {
+        await sendEmail({
+        from: getEnvVar(SMTP.SMTP_FROM),
+        to: email,
+        subject: 'Reset your password',
+        html
+    })
+    }
+    catch (e) {
+        console.log(e)
+        throw createHttpError(500, 'Problem with sending email')
+    }
+}
+
+export const resetPwd = async ({ password, token }) => {
+    let tokenPayload
+
+    try {
+        tokenPayload = jwt.verify(token, getEnvVar(SMTP.JWT_SECRET))
+    }
+    catch (e) {
+        throw createHttpError(401, e.message)
+    }
+
+    const user = await usersCollection.findOne({ _id: tokenPayload.sub, email: tokenPayload.email })
+    
+    if (!user) throw createHttpError(404, 'User not found')
+
+    const hashedPwd = await bcrypt.hash(password, 10)
+
+    await usersCollection.findOneAndUpdate({_id: user._id}, {password: hashedPwd})
 }

@@ -1,5 +1,5 @@
 import { controllerWrapper } from "../decorators/controllerWrapper.js"
-import { loginUser, logoutUser, refreshUser, registerUser } from "../services/authServices.js"
+import { loginUser, logoutUser, refreshUser, registerUser, resetPwd, sendResetPwd } from "../services/authServices.js"
 
 const setupCookies = (session, res) => {
     res.cookie('refreshToken', session.refreshToken, {
@@ -69,9 +69,32 @@ const refreshController = async (req, res) => {
     })
 }
 
+const sendResetPwdController = async (req, res) => {
+    const { email } = req.body
+    await sendResetPwd(email)
+
+    res.status(200).json({
+        status: 200,
+        message: 'Reset password email was successfully sent',
+        data: {}
+    })
+}
+
+const resetPwdController = async (req, res) => {
+    await resetPwd(req.body)
+
+    res.status(200).json({
+        status: 200,
+        message: 'Password was successfully reset',
+        data: {}
+    })
+}
+
 export default {
     registerController: controllerWrapper(registerController),
     loginController: controllerWrapper(loginController),
     logoutController: controllerWrapper(logoutController),
-    refreshController: controllerWrapper(refreshController)
+    refreshController: controllerWrapper(refreshController),
+    sendResetPwdController: controllerWrapper(sendResetPwdController),
+    resetPwdController: controllerWrapper(resetPwdController)
 }

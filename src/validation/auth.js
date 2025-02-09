@@ -10,11 +10,20 @@ const validateName = (value, helpers) => {
 
 export const registerUserSchema = Joi.object({
     name: Joi.string().min(3).max(20).custom(validateName).messages(nameMessages).required(),
-    email: Joi.string().email({ tlds: { allow: false } }).min(3).max(20).messages(emailMessages).required(),
+    email: Joi.string().email({ tlds: { allow: false } }).min(3).max(25).messages(emailMessages).required(),
     password: Joi.string().min(3).max(20).required()
 })
 
 export const loginUserSchema = Joi.object({
-    email: Joi.string().email({ tlds: { allow: false } }).min(3).max(20).messages(emailMessages).required(),
+    email: Joi.string().email({ tlds: { allow: false } }).min(3).max(25).messages(emailMessages).required(),
     password: Joi.string().min(3).max(20).required()
+})
+
+export const sendEmailSchema = Joi.object({
+    email: Joi.string().email({ tlds: { allow: false } }).min(3).max(25).messages(emailMessages).required()
+})
+
+export const resetPwdSchema = Joi.object({
+    password: Joi.string().min(3).max(20).required(),
+    token: Joi.string().required()
 })

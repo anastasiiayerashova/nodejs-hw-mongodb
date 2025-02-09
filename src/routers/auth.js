@@ -1,5 +1,5 @@
 import express from 'express'
-import { loginUserSchema, registerUserSchema } from '../validation/auth.js'
+import { loginUserSchema, registerUserSchema, resetPwdSchema, sendEmailSchema } from '../validation/auth.js'
 import { validateBody } from '../middlewares/validateBody.js'
 import authControllers from '../controllers/authControllers.js'
 
@@ -9,5 +9,7 @@ authRouter.post('/register', validateBody(registerUserSchema), authControllers.r
 authRouter.post('/login', validateBody(loginUserSchema), authControllers.loginController)
 authRouter.post('/logout', authControllers.logoutController)
 authRouter.post('/refresh', authControllers.refreshController)
+authRouter.post('/send-reset-email', validateBody(sendEmailSchema), authControllers.sendResetPwdController)
+authRouter.post('/reset-pwd', validateBody(resetPwdSchema), authControllers.resetPwdController)
 
 export default authRouter

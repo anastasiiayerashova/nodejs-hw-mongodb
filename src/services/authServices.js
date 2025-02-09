@@ -95,7 +95,7 @@ export const sendResetPwd = async (email) => {
     getEnvVar(SMTP.JWT_SECRET),
     {
         expiresIn: '15m'
-        })
+    })
     
     const templateSource = await fs.readFile(path.join('src', 'templates', 'reset-password-email.html'), 'utf-8')
 

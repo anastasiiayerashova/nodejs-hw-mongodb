@@ -103,7 +103,7 @@ export const sendResetPwd = async (email) => {
 
     const html = template({
         name: user.name,
-        link: `${getEnvVar(SMTP.FRONTEND_HOST)}/auth/send-reset-email?token=${token}`
+        link: `${getEnvVar(SMTP.APP_DOMAIN)}/reset-password?token=${token}`
     })
     
     try {

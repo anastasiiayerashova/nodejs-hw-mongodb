@@ -121,6 +121,7 @@ export const sendResetPwd = async (email) => {
 }
 
 export const resetPwd = async ({ password, token }) => {
+    
     let tokenPayload
 
     try {

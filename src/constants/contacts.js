@@ -41,6 +41,11 @@ export const SMTP = {
   APP_DOMAIN: 'APP_DOMAIN'
 }
 
+export const JWT_ERRORS = {
+  JsonWebTokenError: 'JsonWebTokenError',
+  TokenExpiredError: 'TokenExpiredError',
+}
+
 export const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp')
 export const MAIN_UPLOAD_DIR = path.join(process.cwd(), 'uploads')
 

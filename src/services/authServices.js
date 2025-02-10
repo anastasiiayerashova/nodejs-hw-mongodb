@@ -9,7 +9,10 @@ import { getEnvVar } from "../utils/getEnvVar.js"
 import { sendEmail } from "../utils/sendEmail.js"
 import Handlebars from "handlebars"
 import path from 'node:path'
-import fs from 'node:fs/promises'
+import fs from 'node:fs'
+import { JWT_ERRORS } from "../constants/contacts.js"
+
+const templateSource = fs.readFileSync(path.join('src', 'templates', 'reset-password-email.html'), 'utf-8')
 
 const createSession = () => {
     return {
@@ -82,22 +85,20 @@ export const refreshUser = async (sessionId, refreshToken) => {
     })
 }
 
-export const sendResetPwd = async (email) => {
+export const sendResetPwd = async ({ email }) => {
     const user = await usersCollection.findOne({ email })
     
     if (!user) throw createHttpError(404, `User with email ${email} not found`)
     
     const token = jwt.sign(
-    {
-        sub: user._id,
-        email
-    },
-    getEnvVar(SMTP.JWT_SECRET),
-    {
-        expiresIn: '15m'
-    })
-    
-    const templateSource = await fs.readFile(path.join('src', 'templates', 'reset-password-email.html'), 'utf-8')
+        {
+            sub: user._id,
+            email
+        },
+        getEnvVar(SMTP.JWT_SECRET),
+        {
+            expiresIn: '5m'
+        })
 
     const template = Handlebars.compile(templateSource.toString())
 
@@ -108,14 +109,15 @@ export const sendResetPwd = async (email) => {
     
     try {
         await sendEmail({
-        from: getEnvVar(SMTP.SMTP_FROM),
-        to: email,
-        subject: 'Reset your password',
-        html
-    })
+            from: getEnvVar(SMTP.SMTP_FROM),
+            to: email,
+            subject: 'Reset your password',
+            html
+        })
     }
+    
     catch (e) {
-        throw createHttpError(500, e.message)
+        throw createHttpError(500, 'Failed to send the email, please try again later')
     }
 }
 
@@ -126,8 +128,14 @@ export const resetPwd = async ({ password, token }) => {
     try {
         tokenPayload = jwt.verify(token, getEnvVar(SMTP.JWT_SECRET))
     }
+
     catch (e) {
-        throw createHttpError(401, e.message)
+
+        if (e.name === JWT_ERRORS.JsonWebTokenError || e.name === JWT_ERRORS.TokenExpiredError) {
+            throw createHttpError(401, 'Token is expired or invalid')
+        }
+        
+        throw createHttpError(500, e.message)
     }
 
     const user = await usersCollection.findOne({ _id: tokenPayload.sub, email: tokenPayload.email })
@@ -136,5 +144,7 @@ export const resetPwd = async ({ password, token }) => {
 
     const hashedPwd = await bcrypt.hash(password, 10)
 
-    await usersCollection.findOneAndUpdate({_id: user._id}, {password: hashedPwd})
+    await usersCollection.findOneAndUpdate({ _id: user._id }, { password: hashedPwd })
+
+    await sessionsCollection.findOneAndDelete({ userId: user._id })
 }

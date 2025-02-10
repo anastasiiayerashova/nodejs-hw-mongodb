@@ -70,8 +70,7 @@ const refreshController = async (req, res) => {
 }
 
 const sendResetPwdController = async (req, res) => {
-    const { email } = req.body
-    await sendResetPwd(email)
+    await sendResetPwd(req.body)
 
     res.status(200).json({
         status: 200,

@@ -15,9 +15,9 @@ contactsRouter.use('/:contactId', isValidId('contactId'))
 
 contactsRouter.get('/', contactsControllers.getAllController)
 contactsRouter.get('/:contactId', contactsControllers.getByIdController)
-contactsRouter.post('/', upload.single('avatar'), validateBody(createContactsSchema), contactsControllers.createContactController)
+contactsRouter.post('/', upload.single('photo'), validateBody(createContactsSchema), contactsControllers.createContactController)
 contactsRouter.delete('/:contactId', contactsControllers.deleteContactController)
-contactsRouter.put('/:contactId', validateBody(updateContactsSchema), contactsControllers.upsertContactController)
-contactsRouter.patch('/:contactId', validateBody(updateContactsSchema), contactsControllers.patchContactController)
+contactsRouter.put('/:contactId', upload.single('photo'), validateBody(updateContactsSchema), contactsControllers.upsertContactController)
+contactsRouter.patch('/:contactId', upload.single('photo'), validateBody(updateContactsSchema), contactsControllers.patchContactController)
 
 export default contactsRouter

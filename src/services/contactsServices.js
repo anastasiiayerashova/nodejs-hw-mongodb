@@ -35,16 +35,19 @@ export const getContactById = async (contactId, userId) => {
 }
 
 export const createContact = async (payload) => {
-    const url = await saveFile(payload.avatar)
-    return await contactsCollection.create({...payload, avatarUrl: url})
+    const url = await saveFile(payload.photo)
+
+    return await contactsCollection.create({...payload, photo: url})
 }
 
 export const deleteContact = async (contactId, userId) => {
     return await contactsCollection.findOneAndDelete({_id: contactId, userId})
 }
 
-export const upsertContact = async (contactId, payload, userId, options = {}) => {
-    const result = await contactsCollection.findOneAndUpdate({_id: contactId, userId}, payload, {
+export const upsertContact = async (contactId, {file, ...payload}, userId, options = {}) => {
+    const url = await saveFile(file)
+
+    const result = await contactsCollection.findOneAndUpdate({_id: contactId, userId}, {...payload, photo: url}, {
         new: true,
         includeResultMetadata: true,
         ...options

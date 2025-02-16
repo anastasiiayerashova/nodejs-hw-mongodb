@@ -1,5 +1,5 @@
 import express from 'express'
-import { loginUserSchema, registerUserSchema, resetPwdSchema, sendEmailSchema } from '../validation/auth.js'
+import { loginUserSchema, loginWithGoogleOAuthSchema, registerUserSchema, resetPwdSchema, sendEmailSchema } from '../validation/auth.js'
 import { validateBody } from '../middlewares/validateBody.js'
 import authControllers from '../controllers/authControllers.js'
 
@@ -11,5 +11,8 @@ authRouter.post('/logout', authControllers.logoutController)
 authRouter.post('/refresh', authControllers.refreshController)
 authRouter.post('/send-reset-email', validateBody(sendEmailSchema), authControllers.sendResetPwdController)
 authRouter.post('/reset-pwd', validateBody(resetPwdSchema), authControllers.resetPwdController)
+
+authRouter.get('/get-oauth-url', authControllers.getOAuthURLController)
+authRouter.post('/verify-oauth', validateBody(loginWithGoogleOAuthSchema), authControllers.verifyOAuthController)
 
 export default authRouter

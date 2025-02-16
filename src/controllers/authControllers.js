@@ -1,5 +1,6 @@
 import { controllerWrapper } from "../decorators/controllerWrapper.js"
-import { loginUser, logoutUser, refreshUser, registerUser, resetPwd, sendResetPwd } from "../services/authServices.js"
+import { loginOrSignupWithOAuth, loginUser, logoutUser, refreshUser, registerUser, resetPwd, sendResetPwd } from "../services/authServices.js"
+import { generateOAuthURL } from "../utils/googleOAuth2.js"
 
 const setupCookies = (session, res) => {
     res.cookie('refreshToken', session.refreshToken, {
@@ -16,7 +17,7 @@ const setupCookies = (session, res) => {
 
 const registerController = async (req, res) => {
     const { body } = req
-    
+
     const user = await registerUser(body)
 
     res.status(201).json({
@@ -28,7 +29,7 @@ const registerController = async (req, res) => {
 
 const loginController = async (req, res) => {
     const { body } = req
-    
+
     const session = await loginUser(body)
 
     setupCookies(session, res)
@@ -44,7 +45,7 @@ const loginController = async (req, res) => {
 
 const logoutController = async (req, res) => {
     const { sessionId } = req.cookies
-    
+
     await logoutUser(sessionId)
 
     res.clearCookie('refreshToken')
@@ -55,7 +56,7 @@ const logoutController = async (req, res) => {
 
 const refreshController = async (req, res) => {
     const { sessionId, refreshToken } = req.cookies
-    
+
     const session = await refreshUser(sessionId, refreshToken)
 
     setupCookies(session, res)
@@ -89,11 +90,41 @@ const resetPwdController = async (req, res) => {
     })
 }
 
+const getOAuthURLController = async (req, res) => {
+    const url = generateOAuthURL()
+
+    res.json({
+        status: 200,
+        message: 'Successfully get Google OAuth url',
+        data: {
+            url
+        }
+    })
+}
+
+const verifyOAuthController = async (req, res) => {
+    const { code } = req.body
+
+    const loginTicket = await loginOrSignupWithOAuth(code)
+
+    setupCookies(loginTicket, res)
+
+    res.status(200).json({
+        status: 200,
+        message: 'Logged in with google oauth',
+        data: {
+           accessToken: loginTicket.accessToken,
+        }
+    })
+}
+
 export default {
     registerController: controllerWrapper(registerController),
     loginController: controllerWrapper(loginController),
     logoutController: controllerWrapper(logoutController),
     refreshController: controllerWrapper(refreshController),
     sendResetPwdController: controllerWrapper(sendResetPwdController),
-    resetPwdController: controllerWrapper(resetPwdController)
+    resetPwdController: controllerWrapper(resetPwdController),
+    getOAuthURLController: controllerWrapper(getOAuthURLController),
+    verifyOAuthController: controllerWrapper(verifyOAuthController)
 }

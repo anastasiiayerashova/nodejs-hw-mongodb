@@ -11,6 +11,7 @@ import Handlebars from "handlebars"
 import path from 'node:path'
 import fs from 'node:fs'
 import { JWT_ERRORS } from "../constants/contacts.js"
+import { validateOAuthCode } from "../utils/googleOAuth2.js"
 
 const templateSource = fs.readFileSync(path.join('src', 'templates', 'reset-password-email.html'), 'utf-8')
 
@@ -27,7 +28,7 @@ export const registerUser = async (payload) => {
     let user = await usersCollection.findOne({ email: payload.email })
 
     if (user) {
-        throw createHttpError(409, 'Email in use') 
+        throw createHttpError(409, 'Email in use')
     }
 
     const hashedPwd = await bcrypt.hash(payload.password, 10)
@@ -37,19 +38,19 @@ export const registerUser = async (payload) => {
 
 export const loginUser = async ({email, password}) => {
     const user = await usersCollection.findOne({ email: email })
-    
+
     if (!user) {
-        throw createHttpError(404, 'User not found') 
+        throw createHttpError(404, 'User not found')
     }
 
     const arePwdEqual = await bcrypt.compare(password, user.password)
 
     if (!arePwdEqual) {
-        throw createHttpError(401, 'Login or password is incorrect') 
+        throw createHttpError(401, 'Login or password is incorrect')
     }
 
     await sessionsCollection.deleteOne({ userId: user._id })
-    
+
     return await sessionsCollection.create({
         ...createSession(),
         userId: user._id
@@ -62,7 +63,7 @@ export const logoutUser = async (sessionId) => {
 
 export const refreshUser = async (sessionId, refreshToken) => {
     const session = await sessionsCollection.findOne({ _id: sessionId })
-    
+
     if (!session) {
         throw createHttpError(401, 'Can not refresh a session')
     }
@@ -72,13 +73,13 @@ export const refreshUser = async (sessionId, refreshToken) => {
     }
 
     const user = await usersCollection.findOne({ _id: session.userId })
-    
+
     if (!user) {
         throw createHttpError(401, 'Session user not found')
     }
 
     await sessionsCollection.findOneAndDelete({ _id: session._id })
-    
+
     return await sessionsCollection.create({
         ...createSession(),
         userId: session.userId
@@ -87,9 +88,9 @@ export const refreshUser = async (sessionId, refreshToken) => {
 
 export const sendResetPwd = async ({ email }) => {
     const user = await usersCollection.findOne({ email })
-    
+
     if (!user) throw createHttpError(404, `User with email ${email} not found`)
-    
+
     const token = jwt.sign(
         {
             sub: user._id,
@@ -106,7 +107,7 @@ export const sendResetPwd = async ({ email }) => {
         name: user.name,
         link: `${getEnvVar(SMTP.APP_DOMAIN)}/reset-password?token=${token}`
     })
-    
+
     try {
         await sendEmail({
             from: getEnvVar(SMTP.SMTP_FROM),
@@ -115,7 +116,7 @@ export const sendResetPwd = async ({ email }) => {
             html
         })
     }
-    
+
     catch (e) {
         throw createHttpError(500, 'Failed to send the email, please try again later')
     }
@@ -134,12 +135,12 @@ export const resetPwd = async ({ password, token }) => {
         if (e.name === JWT_ERRORS.JsonWebTokenError || e.name === JWT_ERRORS.TokenExpiredError) {
             throw createHttpError(401, 'Token is expired or invalid')
         }
-        
+
         throw createHttpError(500, e.message)
     }
 
     const user = await usersCollection.findOne({ _id: tokenPayload.sub, email: tokenPayload.email })
-    
+
     if (!user) throw createHttpError(404, 'User not found')
 
     const hashedPwd = await bcrypt.hash(password, 10)
@@ -147,4 +148,31 @@ export const resetPwd = async ({ password, token }) => {
     await usersCollection.findOneAndUpdate({ _id: user._id }, { password: hashedPwd })
 
     await sessionsCollection.findOneAndDelete({ userId: user._id })
+}
+
+export const loginOrSignupWithOAuth = async (code) => {
+    const payload = await validateOAuthCode(code)
+
+    if (!payload) throw createHttpError(401, 'No payload in code')
+
+    let user = await usersCollection.findOne({ email: payload.email })
+
+    if (!user) {
+        const hashedPwd = await bcrypt.hash(crypto.randomBytes(30).toString('base64'), 10)
+
+        user = await usersCollection.create({
+            name: payload.given_name + '' + payload.family_name,
+            password: hashedPwd
+        })
+        return user
+    }
+
+    await sessionsCollection.deleteOne({
+        userId: user._id
+    })
+
+    return await sessionsCollection.create({
+        userId: user._id,
+        ...createSession()
+    })
 }

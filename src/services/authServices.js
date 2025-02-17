@@ -161,7 +161,8 @@ export const loginOrSignupWithOAuth = async (code) => {
         const hashedPwd = await bcrypt.hash(crypto.randomBytes(30).toString('base64'), 10)
 
         user = await usersCollection.create({
-            name: payload.given_name + '' + payload.family_name,
+            name: payload.given_name + ' ' + payload.family_name,
+            email: payload.email,
             password: hashedPwd
         })
         return user

@@ -14,7 +14,7 @@
       "url": "http://localhost:3000"
     },
     {
-      "url": "https://example.com/api/v1"
+      "url": "https://swagger-4hks.onrender.com"
     }
   ],
   "tags": [
@@ -692,6 +692,9 @@
           },
           "400": {
             "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -1398,6 +1401,31 @@
                 "message": {
                   "type": "string",
                   "example": "Not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "409": {
+        "description": "Conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 409
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Email in use"
                 }
               }
             }

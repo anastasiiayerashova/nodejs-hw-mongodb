@@ -36,7 +36,7 @@ const loginController = async (req, res) => {
 
     res.status(200).json({
         status: 200,
-        message: 'Successfully logged in an user',
+        message: 'Successfully logged in a user',
         data: {
             accessToken: session.accessToken
         }

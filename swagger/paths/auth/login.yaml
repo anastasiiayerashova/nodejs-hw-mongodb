@@ -1,0 +1,57 @@
+tags:
+  - Auth
+summary: Log in
+operationId: loginUser
+description: 'Log in a user with payload'
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            description: "User's email. Should be between 3 and 25"
+            type: string
+            example: 'janigo2628@intady.com'
+          password:
+            description: "User's password"
+            type: string
+            example: '111'
+responses:
+  '200':
+    description: Successfully logged in a user
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully logged in a user
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: GcyCaJSSZjGWZgRs5E+WxUlnII7JTyZVcvNA9N82
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '404':
+    $ref: '../../components/responses/404.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

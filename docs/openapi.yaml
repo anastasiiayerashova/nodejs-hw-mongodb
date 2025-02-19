@@ -8,16 +8,53 @@ info:
   description: This is a documentation of contacts app
 tags:
   - name: Contacts
-    description: Operations about contacts.
+    description: Operations about contacts
   - name: Auth
-    description: Auth operations.
+    description: Auth operations
+  - name: Google auth
+    description: Google auth operations
 servers:
   - url: http://localhost:3000
-  - url: #посилання на задеплоєний сайт
+  - url: https://example.com/api/v1
 paths:
-  /students/{id}:
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
+  /contacts/{id}:
     get:
       $ref: ../swagger/paths/contacts/{id}/get.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{id}/delete.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{id}/patch.yaml
+    put:
+      $ref: ../swagger/paths/contacts/{id}/put.yaml
+  /auth/register:
+    post:
+      $ref: ../swagger/paths/auth/register.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/paths/auth/login.yaml
+  /auth/logout:
+    post:
+      $ref: ../swagger/paths/auth/logout.yaml
+  /auth/refresh:
+    post:
+      $ref: ../swagger/paths/auth/refresh.yaml
+  /auth/send-reset-email:
+    post:
+      $ref: ../swagger/paths/auth/send-reset-email.yaml
+  /auth/reset-pwd:
+    post:
+      $ref: ../swagger/paths/auth/reset-pwd.yaml
+  /auth/get-oauth-url:
+    get:
+      $ref: ../swagger/paths/googleOAuth/get-oauth-url.yaml
+  /auth/verify-oauth:
+    get:
+      $ref: ../swagger/paths/googleOAuth/verify-oauth.yaml
 components:
   securitySchemes:
     bearerAuth:

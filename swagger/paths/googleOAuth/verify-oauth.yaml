@@ -1,0 +1,50 @@
+tags:
+  - Google auth
+summary: Verify google auth code
+operationId: verifyOAuth
+description: Verify google auth code from link and log in a user
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          code:
+            description: 'A code from google auth link'
+            type: string
+            example: 4%2F0ASVgi3IGz77eCut6glnQP2x1shSGJTSfMqeXL_fm5WI1P9XRW5xCBVx8P8av8T4apxBlde
+responses:
+  '200':
+    description: Logged in with google oauth
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Logged in with google oauth
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: GcyCaJSSZjGWZgRs5E+WxUlnII7JTyZVcvNA9N82
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

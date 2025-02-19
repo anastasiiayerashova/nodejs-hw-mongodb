@@ -1,0 +1,39 @@
+tags:
+  - Google auth
+summary: Get google auth link
+operationId: getGoogleOAuthUrl
+description: Get google auth link
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Successfully get Google OAuth url
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully get Google OAuth url
+            data:
+              type: object
+              required:
+                - url
+              properties:
+                accessToken:
+                  type: string
+                  example: https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&response_type=code&client_id=87195892219-akk4vuiidjktplssnb3gpmrf5d7081j2.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fconfirm-google-auth
+  '400':
+    $ref: '../../components/responses/400.yaml'
+  '401':
+    $ref: '../../components/responses/401.yaml'
+  '500':
+    $ref: '../../components/responses/500.yaml'

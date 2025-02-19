@@ -15,7 +15,7 @@ tags:
     description: Google auth operations
 servers:
   - url: http://localhost:3000
-  - url: https://example.com/api/v1
+  - url: https://swagger-4hks.onrender.com
 paths:
   /contacts:
     get:

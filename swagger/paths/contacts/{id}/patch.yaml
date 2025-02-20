@@ -44,9 +44,6 @@ requestBody:
             description: "Whether is contact's favourite"
             type: boolean
             default: false
-          userId:
-            description: "Contact's user id"
-            type: string
           photo:
             description: "Link to contact's photo"
             type: string

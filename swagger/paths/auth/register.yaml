@@ -17,16 +17,24 @@ requestBody:
           - password
         properties:
           name:
-            description: "User's name"
+            description: "User's name. Name should only contain letters and spaces"
             type: string
+            pattern: "^[A-Za-zÀ-ÿ\\s]+$"
+            minLength: 3
+            maxLength: 20
             example: 'John Doe'
           email:
             description: "User's email. Should be between 3 and 25"
             type: string
-            example: 'janigo2628@intady.com'
+            format: email
+            minLength: 3
+            maxLength: 25
+            example: 'ivan5@example.com'
           password:
             description: "User's password"
             type: string
+            minLength: 3
+            maxLength: 20
             example: '111'
 responses:
   '201':

@@ -53,7 +53,7 @@ paths:
     get:
       $ref: ../swagger/paths/googleOAuth/get-oauth-url.yaml
   /auth/verify-oauth:
-    get:
+    post:
       $ref: ../swagger/paths/googleOAuth/verify-oauth.yaml
 components:
   securitySchemes:

@@ -3,7 +3,7 @@ import { nameMessages, emailMessages } from "../constants/contacts.js"
 
 const validateName = (value, helpers) => {
     if (!/^[A-Za-z\s]+$/.test(value)) {
-        return helpers.message('Name should only contain letters')
+        return helpers.message('Name should only contain letters and spaces')
     }
     return value
 }

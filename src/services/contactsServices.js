@@ -2,8 +2,6 @@ import { contactsCollection } from "../db/models/contacts.js"
 import createHttpError from "http-errors"
 import { calculatePaginationData } from "../utils/calculatePaginationData.js"
 import { sort_order } from "../constants/contacts.js"
-import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js"
-import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js"
 import { saveFile } from "../utils/saveFile.js"
 
 export const getAllContacts = async ({ page = 1, perPage = 10, sortBy = '_id', sortOrder = sort_order.asc, filter = {}, userId }) => {
@@ -21,7 +19,7 @@ export const getAllContacts = async ({ page = 1, perPage = 10, sortBy = '_id', s
 
     const [contactsCount, contacts] = await Promise.all([contactsCollection.find().merge(contactsQuery).countDocuments(),
     contactsQuery.skip(skip).limit(perPage).sort({ [sortBy]: sortOrder }).exec()])
-    
+
     const paginationInfo = calculatePaginationData(page, perPage, contactsCount)
 
     return {

@@ -51,7 +51,8 @@
             "name": "page",
             "schema": {
               "type": "integer",
-              "example": 1
+              "example": 1,
+              "default": 1
             }
           },
           {
@@ -59,7 +60,8 @@
             "name": "perPage",
             "schema": {
               "type": "integer",
-              "example": 10
+              "example": 10,
+              "default": 10
             }
           },
           {
@@ -67,7 +69,8 @@
             "name": "sortBy",
             "schema": {
               "type": "string",
-              "example": "name"
+              "example": "name",
+              "default": "_id"
             },
             "description": "All contact's fields can be mentioned. Default value - _id"
           },
@@ -80,7 +83,8 @@
                 "asc",
                 "desc"
               ],
-              "example": "asc"
+              "example": "asc",
+              "default": "asc"
             }
           },
           {
@@ -88,7 +92,8 @@
             "name": "isFavourite",
             "schema": {
               "type": "boolean",
-              "example": false
+              "example": false,
+              "default": false
             }
           },
           {
@@ -101,7 +106,8 @@
                 "home",
                 "personal"
               ],
-              "example": "work"
+              "example": "work",
+              "default": "personal"
             }
           }
         ],
@@ -209,17 +215,20 @@
                   "phoneNumber",
                   "email",
                   "isFavourite",
-                  "contactType",
-                  "userId"
+                  "contactType"
                 ],
                 "properties": {
                   "name": {
-                    "description": "Contact's name",
-                    "type": "string"
+                    "description": "Contact's name. Name should only contain letters and spaces",
+                    "type": "string",
+                    "pattern": "^[A-Za-zÀ-ÿ\\s]+$",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "phoneNumber": {
                     "description": "Contact's phone number",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                   },
                   "contactType": {
                     "description": "Contact's contact type",
@@ -228,15 +237,20 @@
                       "work",
                       "home",
                       "personal"
-                    ]
+                    ],
+                    "default": "personal"
                   },
                   "email": {
                     "description": "Contact's email. Should be between 3 and 20",
-                    "type": "string"
+                    "type": "string",
+                    "format": "email",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "isFavourite": {
                     "description": "Whether is contact's favourite",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                   },
                   "userId": {
                     "description": "Contact's user id",
@@ -281,6 +295,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -425,12 +442,16 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "description": "Contact's name",
-                    "type": "string"
+                    "description": "Contact's name. Name should only contain letters and spaces",
+                    "type": "string",
+                    "pattern": "^[A-Za-zÀ-ÿ\\s]+$",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "phoneNumber": {
                     "description": "Contact's phone number",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                   },
                   "contactType": {
                     "description": "Contact's contact type",
@@ -439,15 +460,20 @@
                       "work",
                       "home",
                       "personal"
-                    ]
+                    ],
+                    "default": "personal"
                   },
                   "email": {
                     "description": "Contact's email. Should be between 3 and 20",
-                    "type": "string"
+                    "type": "string",
+                    "format": "email",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "isFavourite": {
                     "description": "Whether is contact's favourite",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                   },
                   "userId": {
                     "description": "Contact's user id",
@@ -464,7 +490,7 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Successfully upserted a contact",
             "content": {
               "application/json": {
@@ -478,11 +504,11 @@
                   "properties": {
                     "status": {
                       "type": "integer",
-                      "example": 201
+                      "example": 200
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully upserted a contact"
+                      "example": "Successfully patched a contact"
                     },
                     "data": {
                       "type": "object",
@@ -492,6 +518,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -535,12 +564,16 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "description": "Contact's name",
-                    "type": "string"
+                    "description": "Contact's name.Name should only contain letters and spaces",
+                    "type": "string",
+                    "pattern": "^[A-Za-zÀ-ÿ\\s]+$",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "phoneNumber": {
                     "description": "Contact's phone number",
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                   },
                   "contactType": {
                     "description": "Contact's contact type",
@@ -549,15 +582,20 @@
                       "work",
                       "home",
                       "personal"
-                    ]
+                    ],
+                    "default": "personal"
                   },
                   "email": {
                     "description": "Contact's email. Should be between 3 and 20",
-                    "type": "string"
+                    "type": "string",
+                    "format": "email",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "isFavourite": {
                     "description": "Whether is contact's favourite",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                   },
                   "userId": {
                     "description": "Contact's user id",
@@ -603,6 +641,9 @@
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
           "401": {
             "$ref": "#/components/responses/401"
           },
@@ -641,18 +682,26 @@
                 ],
                 "properties": {
                   "name": {
-                    "description": "User's name",
+                    "description": "User's name. Name should only contain letters and spaces",
                     "type": "string",
+                    "pattern": "^[A-Za-zÀ-ÿ\\s]+$",
+                    "minLength": 3,
+                    "maxLength": 20,
                     "example": "John Doe"
                   },
                   "email": {
                     "description": "User's email. Should be between 3 and 25",
                     "type": "string",
-                    "example": "janigo2628@intady.com"
+                    "format": "email",
+                    "minLength": 3,
+                    "maxLength": 25,
+                    "example": "ivan5@example.com"
                   },
                   "password": {
                     "description": "User's password",
                     "type": "string",
+                    "minLength": 3,
+                    "maxLength": 20,
                     "example": "111"
                   }
                 }
@@ -729,11 +778,16 @@
                   "email": {
                     "description": "User's email. Should be between 3 and 25",
                     "type": "string",
-                    "example": "janigo2628@intady.com"
+                    "format": "email",
+                    "minLength": 3,
+                    "maxLength": 25,
+                    "example": "ivan5@example.com"
                   },
                   "password": {
                     "description": "User's password",
                     "type": "string",
+                    "minLength": 3,
+                    "maxLength": 20,
                     "example": "111"
                   }
                 }
@@ -907,7 +961,10 @@
                   "email": {
                     "description": "User's email. Should be between 3 and 25",
                     "type": "string",
-                    "example": "janigo2628@intady.com"
+                    "format": "email",
+                    "minLength": 3,
+                    "maxLength": 25,
+                    "example": "ivan5@example.com"
                   }
                 }
               }
@@ -989,6 +1046,8 @@
                   "password": {
                     "description": "User's new password",
                     "type": "string",
+                    "minLength": 3,
+                    "maxLength": 20,
                     "example": 111
                   }
                 }
@@ -1092,11 +1151,29 @@
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
+          "404": {
+            "description": "Route not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Route not found"
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -1105,7 +1182,7 @@
       }
     },
     "/auth/verify-oauth": {
-      "get": {
+      "post": {
         "tags": [
           "Google auth"
         ],
